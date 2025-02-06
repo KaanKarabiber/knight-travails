@@ -22,33 +22,40 @@ class KnightMoves {
     }
 
     let queue = [[start, [start]]];
-    let visited = new Set();
-    visited.add(start.toString());
+    let visitedMoves = new Map();
+    visitedMoves.set(start.toString(), 0);
 
     while (queue.length) {
       let [current, path] = queue.shift();
       let [x, y] = current;
+      let moves = path.length - 1;
 
       for (let [dx, dy] of this.directions) {
         let nx = x + dx;
         let ny = y + dy;
         let newPosition = [nx, ny];
+        let newMoves = moves + 1;
 
-        if (this.isValid(nx, ny) && !visited.has(newPosition.toString())) {
-          let newPath = [...path, newPosition];
+        if (this.isValid(nx, ny)) {
+          let key = newPosition.toString();
 
-          if (nx === target[0] && ny === target[1]) {
-            console.log(
-              `You made it in ${newPath.length - 1} moves! Here's your path:`
-            );
-            return newPath;
+          if (!visitedMoves.has(key) || visitedMoves.get(key) > newMoves) {
+            visitedMoves.set(key, newMoves);
+            let newPath = [...path, newPosition];
+
+            if (nx === target[0] && ny === target[1]) {
+              console.log(
+                `You made it in ${newPath.length - 1} moves! Here's your path:`
+              );
+              return newPath;
+            }
+
+            queue.push([newPosition, newPath]);
           }
-
-          queue.push([newPosition, newPath]);
-          visited.add(newPosition.toString());
         }
       }
     }
+
     return [];
   }
 }
